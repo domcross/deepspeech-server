@@ -65,13 +65,14 @@ def make_driver(loop=None):
                 if type(item) is SpeechToText:
                     if ds_model is not None:
                         try:
-                            fs, audio = wav.read(io.BytesIO(item.data))
+                            buffer = io.BytesIO(item.data)
+                            fs, audio = wav.read(buffer)
                             # convert to mono.
                             # todo: move to a component or just a function here
                             if len(audio.shape) > 1:
                                 audio = audio[:, 0]
                             #text = ds_model.stt(audio, fs)
-                            text = ds_model.stt(aBuffer=audio, aBufferSize=len(audio))
+                            text = ds_model.stt(aBuffer=buffer, aBufferSize=len(buffer))
                             log("STT result: {}".format(text))
                             observer.on_next(Observable.just(TextResult(
                                 text=text,
